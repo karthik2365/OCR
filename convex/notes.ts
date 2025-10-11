@@ -5,7 +5,10 @@ import { v } from "convex/values";
 export const getNotes = query({
   args: { userId: v.string() },
   handler: async (ctx, args) => {
-    return await ctx.db.query("notes").filter(q => q.eq(q.field("userId"), args.userId)).collect();
+    return await ctx.db
+      .query("notes")
+      .filter(q => q.eq(q.field("userId"), args.userId))
+      .collect();
   },
 });
 
@@ -16,3 +19,4 @@ export const addNote = mutation({
     await ctx.db.insert("notes", { userId: args.userId, text: args.text });
   },
 });
+

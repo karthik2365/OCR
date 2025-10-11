@@ -19,7 +19,7 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow">
-      <h1 className="text-2xl font-bold mb-4">Hello, {user.firstName || user.username} 👋</h1>
+      <h1 className="text-2xl font-bold mb-4">Dream place which you want to visit {user.firstName || user.username} 👋</h1>
 
       <form
         onSubmit={async e => {

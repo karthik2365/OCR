@@ -28,12 +28,12 @@ export function SiteNavbar() {
             {/* Home link */}
             <NavigationMenuItem>
                 <NavigationMenuLink
-                    href="/"
+                    href="/navbar/maps"
                   className={cn(
                     "rounded-md px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
                   )}
                 >
-                  Home
+                  Maps
                 </NavigationMenuLink>
             </NavigationMenuItem>
 
