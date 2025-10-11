@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
@@ -66,8 +65,8 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
   useEffect(() => {
     // This is wrapped to ensure it only runs once and avoids the Fast Refresh error.
     if (typeof window !== 'undefined') {
-        delete (L.Icon.Default.prototype as any)._getIconUrl
-        L.Icon.Default.mergeOptions({
+        delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl: undefined })._getIconUrl
+            L.Icon.Default.mergeOptions({
             iconUrl: icon.src,
             iconRetinaUrl: iconRetina.src,
             shadowUrl: iconShadow.src,
@@ -180,10 +179,10 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
   
   // Custom Polyline decoding function for OSRM
   const decodePolyline = (str: string, precision: number): [number, number][] => {
-    let index = 0, lat = 0, lng = 0, coordinates: [number, number][] = [],
-        shift = 0, result = 0, byte = null,
-        latitude_change, longitude_change,
-        factor = Math.pow(10, precision || 5);
+    let index = 0, lat = 0, lng = 0, shift = 0, result = 0, byte = null,
+    latitude_change, longitude_change;
+    const coordinates: [number, number][] = [];
+    const factor = Math.pow(10, precision || 5);
 
     while (index < str.length) {
         // latitude

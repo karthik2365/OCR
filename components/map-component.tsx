@@ -105,22 +105,34 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
 
         let featureData: NaturalFeature[] = [];
         if (data && data.elements) {
-          featureData = data.elements
-            .map((element: any, index: number) => {
-              const featureLat = element.lat || element.center?.lat
-              const featureLon = element.lon || element.center?.lon
-              const featureName = element.tags?.name || element.tags?.natural || "Unnamed Feature"
-              
-              return {
-                id: element.id || index,
-                name: featureName,
-                lat: featureLat,
-                lon: featureLon,
-                natural: element.tags?.natural,
-                tags: element.tags || {},
-              }
-            })
-            .filter((feature: any) => feature.lat && feature.lon)
+// Define a simple type for the API element to replace 'any'
+interface OverpassElement {
+    id: number;
+    lat?: number;
+    lon?: number;
+    center?: { lat: number; lon: number };
+    tags?: Record<string, string>;
+  }
+  
+  // ... inside fetchFeatures
+  if (data && data.elements) {
+    featureData = data.elements
+      .map((element: OverpassElement, index: number) => { // Use OverpassElement here
+        const featureLat = element.lat || element.center?.lat
+        const featureLon = element.lon || element.center?.lon
+        const featureName = element.tags?.name || element.tags?.natural || "Unnamed Feature"
+          
+        return {
+          id: element.id || index,
+          name: featureName,
+          lat: featureLat,
+          lon: featureLon,
+          natural: element.tags?.natural,
+          tags: element.tags || {},
+        } as NaturalFeature;
+      })
+      .filter((feature: NaturalFeature) => feature.lat && feature.lon) // Use NaturalFeature here
+  }
         }
 
         setFeatures(featureData)
