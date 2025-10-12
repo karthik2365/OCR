@@ -19,9 +19,9 @@ import { silkScreen } from "../layout"
 export function SiteNavbar() {
   return (
 <header className="bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b border-border/30">      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        <a href="/" className={`${silkScreen.className} text-4xl font-bold text-slate-500`}>
+        <Link href="/" className={`${silkScreen.className} text-4xl font-bold text-slate-500`}>
           MountIng
-        </a>
+        </Link>
 
         <NavigationMenu>
           <NavigationMenuList>

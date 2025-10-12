@@ -176,12 +176,14 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
           })
           
         } else {
+// ... (lines 181-190)
           setRouteData(null)
         }
-      } catch (err) {
+      } catch { // FIX: Removed 'err' from catch parameter
         if (!loading) setError("Failed to calculate route. Check addresses or try again.")
         setRouteData(null)
       }
+// ...
     }
 
     fetchRoute()
