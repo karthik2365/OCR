@@ -25,7 +25,7 @@ interface NaturalFeature {
 interface MapComponentProps {
   destinationCoordinates: [number, number] | null
   originCoordinates: [number, number] | null
-  onFeaturesFetched: (features: NaturalFeature[]) => void;
+  onFeaturesFetched?: (features: NaturalFeature[]) => void
 }
 
 // Component to recenter the map when coordinates change
@@ -37,11 +37,15 @@ function ChangeView({ center, zoom }: { center: [number, number], zoom: number }
 
 // Function to format distance in meters to kilometers
 const formatDistance = (meters: number) => {
-    if (meters < 1000) return `${Math.round(meters)} m`
-    return `${(meters / 1000).toFixed(1)} km`
+  if (meters < 1000) return `${Math.round(meters)} m`
+  return `${(meters / 1000).toFixed(1)} km`
 }
 
-export default function MapComponent({ destinationCoordinates, originCoordinates, onFeaturesFetched }: MapComponentProps) {
+export default function MapComponent({
+  destinationCoordinates,
+  originCoordinates,
+  onFeaturesFetched,
+}: MapComponentProps) {
   const [features, setFeatures] = useState<NaturalFeature[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -53,33 +57,32 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
   let mapZoom = 13
   
   if (originCoordinates && destinationCoordinates) {
-      const bounds = L.latLngBounds(originCoordinates, destinationCoordinates)
-      mapCenter = [bounds.getCenter().lat, bounds.getCenter().lng]
-      mapZoom = 10 
+    const bounds = L.latLngBounds(originCoordinates, destinationCoordinates)
+    mapCenter = [bounds.getCenter().lat, bounds.getCenter().lng]
+    mapZoom = 10 
   } else if (destinationCoordinates) {
-      mapCenter = destinationCoordinates
-      mapZoom = 13 
+    mapCenter = destinationCoordinates
+    mapZoom = 13 
   }
 
-  // Fix Leaflet's default icon issue - Dependency array MUST be empty to run once.
+  // Fix Leaflet's default icon issue
   useEffect(() => {
-    // This is wrapped to ensure it only runs once and avoids the Fast Refresh error.
-    if (typeof window !== 'undefined') {
-        delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl: undefined })._getIconUrl
-            L.Icon.Default.mergeOptions({
-            iconUrl: icon.src,
-            iconRetinaUrl: iconRetina.src,
-            shadowUrl: iconShadow.src,
-        })
+    if (typeof window !== "undefined") {
+      delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl: undefined })._getIconUrl
+      L.Icon.Default.mergeOptions({
+        iconUrl: icon.src,
+        iconRetinaUrl: iconRetina.src,
+        shadowUrl: iconShadow.src,
+      })
     }
-  }, []) 
+  }, [])
 
   // --- FEATURE (HILLS/MOUNTAINS) FETCHING ---
   useEffect(() => {
     async function fetchFeatures() {
       if (!destinationCoordinates) {
         setFeatures([])
-        onFeaturesFetched([]); 
+        onFeaturesFetched?.([]) 
         return
       }
 
@@ -102,7 +105,7 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
         const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`)
         const data = await response.json()
 
-        let featureData: NaturalFeature[] = [];
+        let featureData: NaturalFeature[] = []
         if (data && data.elements) {
           featureData = data.elements
             .map((element: any, index: number) => {
@@ -123,19 +126,18 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
         }
 
         setFeatures(featureData)
-        onFeaturesFetched(featureData); 
-
+        onFeaturesFetched?.(featureData)
       } catch (err) {
         console.error("Error fetching natural features:", err)
         setError("Failed to fetch nearby hills and mountains. Please try again.")
-        onFeaturesFetched([]); 
+        onFeaturesFetched?.([])
       } finally {
         setLoading(false)
       }
     }
 
     fetchFeatures()
-  }, [destinationCoordinates, onFeaturesFetched]) 
+  }, [destinationCoordinates, onFeaturesFetched])
 
   // --- ROUTING FETCHING ---
   useEffect(() => {
@@ -148,23 +150,22 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
       const [startLat, startLon] = originCoordinates
       const [endLat, endLon] = destinationCoordinates
       
-      const profile = "driving" 
+      const profile = "driving"
       const osrmUrl = `https://router.project-osrm.org/route/v1/${profile}/${startLon},${startLat};${endLon},${endLat}?overview=full&alternatives=false&steps=false`
       
       try {
         const response = await fetch(osrmUrl)
         const data = await response.json()
 
-        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+        if (data.code === "Ok" && data.routes && data.routes.length > 0) {
           const route = data.routes[0]
           const decodedCoords = decodePolyline(route.geometry, 5)
           
           setRouteData({
             coordinates: decodedCoords,
-            distance: route.distance, 
-            duration: route.duration, 
+            distance: route.distance,
+            duration: route.duration,
           })
-          
         } else {
           setRouteData(null)
         }
@@ -176,48 +177,48 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
 
     fetchRoute()
   }, [originCoordinates, destinationCoordinates])
-  
-  // Custom Polyline decoding function for OSRM
+
+  // Polyline decoding function
   const decodePolyline = (str: string, precision: number): [number, number][] => {
-    let index = 0, lat = 0, lng = 0, shift = 0, result = 0, byte = null,
-    latitude_change, longitude_change;
-    const coordinates: [number, number][] = [];
-    const factor = Math.pow(10, precision || 5);
+    let index = 0, lat = 0, lng = 0, shift = 0, result = 0, byte = null
+    let latitude_change, longitude_change
+    const coordinates: [number, number][] = []
+    const factor = Math.pow(10, precision || 5)
 
     while (index < str.length) {
-        // latitude
-        shift = 0; result = 0;
-        do {
-            byte = str.charCodeAt(index++) - 63;
-            result |= (byte & 0x1f) << shift;
-            shift += 5;
-        } while (byte >= 0x20);
-        latitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
-        lat += latitude_change;
+      shift = 0
+      result = 0
+      do {
+        byte = str.charCodeAt(index++) - 63
+        result |= (byte & 0x1f) << shift
+        shift += 5
+      } while (byte >= 0x20)
+      latitude_change = (result & 1) ? ~(result >> 1) : (result >> 1)
+      lat += latitude_change
 
-        // longitude
-        shift = 0; result = 0;
-        do {
-            byte = str.charCodeAt(index++) - 63;
-            result |= (byte & 0x1f) << shift;
-            shift += 5;
-        } while (byte >= 0x20);
-        longitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
-        lng += longitude_change;
+      shift = 0
+      result = 0
+      do {
+        byte = str.charCodeAt(index++) - 63
+        result |= (byte & 0x1f) << shift
+        shift += 5
+      } while (byte >= 0x20)
+      longitude_change = (result & 1) ? ~(result >> 1) : (result >> 1)
+      lng += longitude_change
 
-        coordinates.push([lat / factor, lng / factor]);
+      coordinates.push([lat / factor, lng / factor])
     }
-    return coordinates;
-  };
-  
+    return coordinates
+  }
+
   // Custom marker for Origin
   const originIcon = new L.Icon({
-    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2RhNGYwZiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIxIDEwYTYgNiAwIDAgMC0xMiAwYzAgNy02IDktNiA5aDE4cy02LTItNi05eiIvPjxwYXRoIGQ9Ik0xMiAxMmMxLjEwNSAwIDItLjg5NSAyLTJTMTMuMTA1IDggMTIgOHMtMiAuODk1LTIgMmMwIDEuMTA1Ljg5NSAyIDIgMnoiLz48L3N2Zz4=',
+    iconUrl:
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2RhNGYwZiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIxIDEwYTYgNiAwIDAgMC0xMiAwYzAgNy02IDktNiA5aDE4cy02LTItNi05eiIvPjxwYXRoIGQ9Ik0xMiAxMmMxLjEwNSAwIDItLjg5NSAyLTJTMTMuMTA1IDggMTIgOHMtMiAuODk1LTIgMmMwIDEuMTA1Ljg5NSAyIDIgMnoiLz48L3N2Zz4=",
     iconSize: [30, 30],
     iconAnchor: [15, 30],
     popupAnchor: [0, -20],
-  });
-
+  })
 
   return (
     <div className="relative">
@@ -228,8 +229,12 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
             <Route className="h-6 w-6 text-blue-600 flex-shrink-0" />
             <div>
               <p className="text-lg font-bold text-blue-800">Route Summary (Driving)</p>
-              <p className="text-sm">Distance: <span className="font-semibold">{formatDistance(routeData.distance)}</span></p>
-              <p className="text-sm">Duration: <span className="font-semibold">{Math.round(routeData.duration / 60)} mins</span></p>
+              <p className="text-sm">
+                Distance: <span className="font-semibold">{formatDistance(routeData.distance)}</span>
+              </p>
+              <p className="text-sm">
+                Duration: <span className="font-semibold">{Math.round(routeData.duration / 60)} mins</span>
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -242,15 +247,10 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         {/* Draw Route Polyline */}
         {routeData && (
-            <Polyline 
-                positions={routeData.coordinates} 
-                color="#0066FF" 
-                weight={6} 
-                opacity={0.8} 
-            />
+          <Polyline positions={routeData.coordinates} color="#0066FF" weight={6} opacity={0.8} />
         )}
 
         {/* Origin Location marker */}
@@ -267,7 +267,7 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
           </Marker>
         )}
 
-        {/* Natural Feature markers (Hills/Mountains) */}
+        {/* Natural Feature markers */}
         {features.map((feature) => (
           <Marker key={feature.id} position={[feature.lat, feature.lon]}>
             <Popup>
@@ -282,7 +282,9 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <MapPin className="h-4 w-4 flex-shrink-0" />
-                    <span>Lat: {feature.lat.toFixed(4)}, Lon: {feature.lon.toFixed(4)}</span>
+                    <span>
+                      Lat: {feature.lat.toFixed(4)}, Lon: {feature.lon.toFixed(4)}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -313,13 +315,12 @@ export default function MapComponent({ destinationCoordinates, originCoordinates
           <div className="bg-white p-6 rounded-md shadow-md max-w-md text-center">
             <h3 className="text-lg font-medium mb-2">Enter an address to begin</h3>
             <p className="text-muted-foreground">
-              Use the search box above to find a **Destination Address** and discover nearby hills. Optionally, enter an **Origin Address** to see the route and distance.
+              Use the search box above to find a <strong>Destination Address</strong> and discover nearby hills.
+              Optionally, enter an <strong>Origin Address</strong> to see the route and distance.
             </p>
           </div>
         </div>
       )}
-
-      {/* No results message (Now handled by the parent component's list check) */}
     </div>
   )
 }

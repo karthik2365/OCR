@@ -14,25 +14,24 @@ import { cn } from "@/lib/utils"
 import { BookOpen, Component, ListTree, Rocket, Sparkles } from "lucide-react"
 import * as React from "react"
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
+import { silkScreen } from "../layout"
 
 export function SiteNavbar() {
   return (
 <header className="bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b border-border/30">      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="font-semibold text-sm tracking-tight">
-            MountEver
-          <span className="sr-only">Home</span>
-        </Link>
+        <a href="/" className={`${silkScreen.className} text-4xl font-bold text-slate-500`}>
+          MountIng
+        </a>
 
         <NavigationMenu>
           <NavigationMenuList>
-            {/* Home link */}
-            <NavigationMenuItem>
+          <NavigationMenuItem>
                 <NavigationMenuLink
-                    href="/navbar/maps"
-                  className={cn(
-                    "rounded-md px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
-                  )}
-                >
+                        href="/maps"
+                    className={cn(
+                        "rounded-md px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
+                    )}
+                    >
                   Maps
                 </NavigationMenuLink>
             </NavigationMenuItem>
@@ -40,12 +39,12 @@ export function SiteNavbar() {
             {/* Components mega menu */}
             <NavigationMenuItem>
                 <NavigationMenuLink
-                        href="/components"
+                        href="/breathing"
                     className={cn(
                         "rounded-md px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
                     )}
                     >
-                  Components
+                  Altitude
                 </NavigationMenuLink>
             </NavigationMenuItem>
 

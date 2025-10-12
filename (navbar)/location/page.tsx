@@ -1,5 +1,5 @@
 // Corrected component
-import HillFinder from "./_maps/maps";
+import HillFinder from "../../app/maps/page";
 
 export default function MapPage() {
   return (

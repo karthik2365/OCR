@@ -2,7 +2,7 @@
 
 /* Default colors (light mode) → now black background, white text */
 :root {
-  --background: #ffffff; /* black */
+  --background: #c1d0d9; /* black */
   --foreground: #000000; /* white */
 }
 

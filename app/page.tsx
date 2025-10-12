@@ -5,14 +5,15 @@ import Link from "next/link";
 import SigninSetup from "./login/signup"; // adjust the path
 import { WobbleCardDemo } from "./_components/wobbleCard";
 import { ImagesSliderDemo } from "./_components/imageSlider";
-import HillFinder from "./_maps/maps";
+import HillFinder from "./maps/page";
 
 export default function Home() {
   return (
     <div>
-      {/* <WobbleCardDemo/> */}
       <ImagesSliderDemo/>
-      <HillFinder/>
+      <br/>
+      <br/>
+      <WobbleCardDemo/>
     </div>
   );
 }
