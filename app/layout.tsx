@@ -1,8 +1,4 @@
-// app/layout.tsx (Server Component)
 
-// REMOVE: "use client"
-
-import { type Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Silkscreen } from 'next/font/google' // Using Silkscreen
 import './globals.css'

@@ -5,13 +5,11 @@ import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
-  NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
   NavigationMenuIndicator,
 } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
-import { BookOpen, Component, ListTree, Rocket, Sparkles } from "lucide-react"
 import * as React from "react"
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
 import { silkScreen } from "../layout"
@@ -103,57 +101,57 @@ export function SiteNavbar() {
   )
 }
 
-type ListItemProps = {
-  title?: React.ReactNode
-  children?: React.ReactNode
-  href: string
-}
+// type ListItemProps = {
+//   title?: React.ReactNode
+//   children?: React.ReactNode
+//   href: string
+// }
 
-const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps & React.ComponentPropsWithoutRef<"a">>(
-  ({ className, title, children, href, ...props }, ref) => {
-    return (
-      <li>
-        {/* <Link href={href} legacyBehavior passHref>
-          <NavigationMenuLink
-            ref={ref}
-            className={cn(
-              "rounded-md p-3 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
-              className,
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            {children ? (
-              <p className="text-muted-foreground mt-1 line-clamp-2 text-xs leading-relaxed">{children}</p>
-            ) : null}
-          </NavigationMenuLink>
-        </Link> */}
-      </li>
-    )
-  },
-)
-ListItem.displayName = "ListItem"
+// const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps & React.ComponentPropsWithoutRef<"a">>(
+//   ({ className, title, children, href, ...props }, ref) => {
+//     return (
+//       <li>
+//         {/* <Link href={href} legacyBehavior passHref>
+//           <NavigationMenuLink
+//             ref={ref}
+//             className={cn(
+//               "rounded-md p-3 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1",
+//               className,
+//             )}
+//             {...props}
+//           >
+//             <div className="text-sm font-medium leading-none">{title}</div>
+//             {children ? (
+//               <p className="text-muted-foreground mt-1 line-clamp-2 text-xs leading-relaxed">{children}</p>
+//             ) : null}
+//           </NavigationMenuLink>
+//         </Link> */}
+//       </li>
+//     )
+//   },
+// )
+// ListItem.displayName = "ListItem"
 
-function DocItem({
-  icon,
-  title,
-  desc,
-  href,
-}: {
-  icon: React.ReactNode
-  title: string
-  desc: string
-  href: string
-}) {
-  return (
-    <Link href={href} className="rounded-md border p-3 hover:bg-accent/30">
-      <div className="flex items-start gap-3">
-        <div className="rounded-md border p-2">{icon}</div>
-        <div>
-          <p className="text-sm font-medium">{title}</p>
-          <p className="text-muted-foreground mt-1 text-xs leading-relaxed">{desc}</p>
-        </div>
-      </div>
-    </Link>
-  )
-}
+// function DocItem({
+//   icon,
+//   title,
+//   desc,
+//   href,
+// }: {
+//   icon: React.ReactNode
+//   title: string
+//   desc: string
+//   href: string
+// }) {
+//   return (
+//     <Link href={href} className="rounded-md border p-3 hover:bg-accent/30">
+//       <div className="flex items-start gap-3">
+//         <div className="rounded-md border p-2">{icon}</div>
+//         <div>
+//           <p className="text-sm font-medium">{title}</p>
+//           <p className="text-muted-foreground mt-1 text-xs leading-relaxed">{desc}</p>
+//         </div>
+//       </div>
+//     </Link>
+//   )
+// }
