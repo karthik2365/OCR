@@ -6,8 +6,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { motion } from 'framer-motion';
 import { Upload, FileText, Loader2, CheckCircle2, AlertTriangle, Copy, Download } from 'lucide-react';
 
-// Set PDF.js worker source (host in /public)
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+// Set PDF.js worker source from CDN
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface OCRResult {
   text: string;
