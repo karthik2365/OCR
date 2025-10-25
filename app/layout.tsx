@@ -1,7 +1,7 @@
 import { Silkscreen } from 'next/font/google' // Using Silkscreen
 import './globals.css'
 
-export const silkScreen = Silkscreen({
+const silkScreen = Silkscreen({
   subsets: ["latin"],
   weight: "400",
 });

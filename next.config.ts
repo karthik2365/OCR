@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb', // Adjust for larger PDFs if needed
-    },
-  },};
+  // Configuration options for Next.js
+};
 
 export default nextConfig;

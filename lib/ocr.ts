@@ -10,8 +10,10 @@ export async function extractTextFromPDF(pdfPath: string, outputDir: string): Pr
     const output = fromPath(pdfPath, {
       density: 300,
       format: 'png',
-      outputDir,
-      outputName: 'page',
+      saveFilename: 'page',
+      savePath: outputDir,
+      width: 2480,
+      height: 3508,
     });
 
     await output.bulk(-1);

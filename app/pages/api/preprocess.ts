@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       .png()
       .toBuffer();
 
-    return new NextResponse(processed, {
+    return new Response(new Uint8Array(processed), {
       status: 200,
       headers: { 'Content-Type': 'image/png' },
     });
