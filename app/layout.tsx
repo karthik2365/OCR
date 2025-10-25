@@ -1,9 +1,5 @@
-
-import { ClerkProvider } from '@clerk/nextjs'
 import { Silkscreen } from 'next/font/google' // Using Silkscreen
 import './globals.css'
-import { Providers } from './providers'
-import { SiteNavbar } from './_components/navbar'
 
 export const silkScreen = Silkscreen({
   subsets: ["latin"],
@@ -21,16 +17,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // Wrap the entire layout with ClerkProvider if you want it to cover all routes
   return (
-    <ClerkProvider>
       <html lang="en" className={silkScreen.className}>
         <body>
-          <SiteNavbar />
           
-          <Providers>{children}</Providers>
+            {children}
         </body>
       </html>
-    </ClerkProvider>
   );
 }
