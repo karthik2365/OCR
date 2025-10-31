@@ -1,13 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Tesseract from 'tesseract.js';
-import * as pdfjsLib from 'pdfjs-dist';
 import { motion } from 'framer-motion';
 import { Upload, FileText, Loader2, CheckCircle2, AlertTriangle, Copy, Download } from 'lucide-react';
 
-// Set PDF.js worker source from CDN
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface OCRResult {
   text: string;
@@ -64,6 +61,11 @@ const OCRUploader: React.FC = () => {
   };
 
   const processPDF = async (file: File): Promise<PDFPageResult[]> => {
+    // Dynamically import pdfjs in the browser to avoid server-side bundling of native
+    // binaries (like node-canvas) which breaks Next.js production builds.
+  const pdfjsLib: any = await import('pdfjs-dist/legacy/build/pdf');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     const results: PDFPageResult[] = [];
