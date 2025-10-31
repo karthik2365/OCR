@@ -53,10 +53,15 @@ export default function Home() {
 }
 
 // Card Component
-function LinkCard({ href, title, description, icon, color, index }: { href: string; title: string; description: string; icon: React.ReactNode; color: string; index: number; }) {
-  const colors = {
-    indigo: { bg: "bg-[#6366F1] text-white", hover: "bg-[#E0E7FF]" },
-  };
+const colors = {
+  indigo: { bg: "bg-[#6366F1] text-white", hover: "bg-[#E0E7FF]" },
+} as const;
+
+type ColorKey = keyof typeof colors;
+
+function LinkCard({ href, title, description, icon, color, index }: { href: string; title: string; description: string; icon: React.ReactNode; color: ColorKey; index: number; }) {
+  const colorKey = color as ColorKey;
+  const colorObj = colors[colorKey] ?? colors.indigo;
 
   return (
     <Link href={href}>
@@ -68,7 +73,7 @@ function LinkCard({ href, title, description, icon, color, index }: { href: stri
         className={`group relative bg-white/70 backdrop-blur-md border border-gray-200 rounded-xl p-8 cursor-pointer overflow-hidden`}
       >
         <div className="flex items-center gap-4 mb-4">
-          <div className={`p-3 rounded-lg ${colors[color].bg} shadow-md`}>{icon}</div>
+          <div className={`p-3 rounded-lg ${colorObj.bg} shadow-md`}>{icon}</div>
           <h3 className="text-xl font-bold text-gray-900">{title}</h3>
         </div>
         <p className="text-gray-700 text-sm leading-relaxed">{description}</p>
